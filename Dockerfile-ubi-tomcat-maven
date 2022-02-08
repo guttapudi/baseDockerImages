@@ -1,4 +1,4 @@
-FROM base-image:latest
+FROM registry.access.redhat.com/ubi8/ubi
 ARG TOMCAT_VERSION=8.5.66
 ARG MAVEN_VERSION=3.6.3
 RUN yum install -y java-1.8.0-openjdk-devel
