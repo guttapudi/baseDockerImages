@@ -1,0 +1,18 @@
+FROM base-image:latest
+ARG TOMCAT_VERSION=8.5.66
+ARG MAVEN_VERSION=3.6.3
+RUN yum install -y java-1.8.0-openjdk-devel
+RUN mkdir /usr/local/tomcat && mkdir /usr/local/maven
+RUN yum install -y wget
+RUN wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.66/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz -O /tmp/tomcat.tar.gz 
+RUN cd /tmp && tar xvfz tomcat.tar.gz
+RUN wget https://dlcdn.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz -O /tmp/maven.tar.gz
+RUN cd /tmp && tar xvfz maven.tar.gz
+RUN cp -Rv /tmp/apache-maven-${MAVEN_VERSION}/* /usr/local/maven/
+RUN groupadd -r tomcat -g 1001 && useradd -d /home/tomcat -u 1001 -m -s /bin/bash -g tomcat tomcat
+RUN cp -Rv /tmp/apache-tomcat-${TOMCAT_VERSION}/* /usr/local/tomcat/
+ENV MAVEN_HOME=/usr/local/maven PATH=/usr/local/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+RUN rm -rf /usr/local/tomcat/webapps/*
+RUN chown -R tomcat:tomcat /usr/local/tomcat
+EXPOSE 8080
+USER tomcat
